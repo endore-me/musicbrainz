@@ -1,29 +1,17 @@
-require 'simplecov'
-
-if ENV["COVERAGE"]
-  SimpleCov.start do
-    add_filter '/gems/'
-    add_filter '/test/'
-    add_filter '/spec/'
-  end
-end
-
-require 'rubygems'
-require 'bundler'
-begin
-  Bundler.setup(:default, :development)
-rescue Bundler::BundlerError => e
-  $stderr.puts e.message
-  $stderr.puts "Run `bundle install` to install missing gems"
-  exit e.status_code
-end
-require "vcr"
+require "rubygems"
+require "bundler/setup"
 require "musicbrainz"
 
-# HTTPI.log = false
-Dir[File.dirname(__FILE__)+"/../lib/*.rb"].each{ |f| require f }
-Dir[File.dirname(__FILE__)+"/../spec/support/*.rb"].each{ |f| require f }
+MusicBrainz.configure do |c|
+  test_email = %x{ git config --global --get user.email }.gsub(/\n/, "")
+  test_email = "magnolia_fan@me.com" if test_email.empty?
+
+  c.app_name = "MusicBrainzGemTestSuite"
+  c.app_version = MusicBrainz::VERSION
+  c.contact = test_email
+  c.perform_caching = true
+end
 
 RSpec.configure do |config|
-  config.mock_with :rspec
+  # Configuration is not currently necessary
 end

@@ -9,6 +9,7 @@ module MusicBrainz
     field :date_begin, Time
     field :date_end, Time
     field :urls, Hash
+    field :desc, String
 
     attr_writer :release_groups
 
